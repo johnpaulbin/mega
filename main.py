@@ -63,7 +63,7 @@ async def on_message(message):
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
                 while True:
-                  
+                    print(TRUSTED_URLS)
                     for link in links:
                         print(get_domain(link))
                         if get_domain(link) in TRUSTED_URLS:
