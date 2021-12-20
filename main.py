@@ -34,7 +34,7 @@ async def predict(ctx, *, args):
 
 @client.event
 async def on_message(message):
-    if not message.content.startswith('mega'):
+    if not message.content.startswith('mega') and message.author != client.user:
         if not get(message.guild.roles,
                    name="Contributors") in message.author.roles:
             links = re.findall(r'(https?://\S+)', message.content)
