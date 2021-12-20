@@ -62,22 +62,17 @@ async def on_message(message):
                    name="Contributors") in message.author.roles:
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
-                while True:
-                    print(TRUSTED_URLS)
-                    for link in links:
-                        print(get_domain(link))
-                        if get_domain(link) in TRUSTED_URLS:
-                            print("IN IT!!!! SAF!!!")
-                            break
+                for link in links:
+                    if get_domain(link) in TRUSTED_URLS:
+                        return
 
-                    if 'bad' in pipeline.predict(parse_url(links)):
-                        await message.delete()
-                        await LOGGING_CHANNEL.send(
-                            f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
-                        )
-                        break
+                if 'bad' in pipeline.predict(parse_url(links)):
+                    await message.delete()
+                    await LOGGING_CHANNEL.send(
+                        f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
+                    )
+                return
 
-                    break
     else:
         await client.process_commands(message)
 
