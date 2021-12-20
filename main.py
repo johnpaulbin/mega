@@ -6,7 +6,6 @@ from discord.utils import get
 from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, CheckFailure, check
 import joblib
-from web import keep_alive
 import sklearn
 from utils import parse_url
 import re
@@ -49,6 +48,4 @@ async def on_message(message):
     else:
         await client.process_commands(message)
 
-
-keep_alive()
 client.run(os.getenv("TOKEN"))
