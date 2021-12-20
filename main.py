@@ -17,11 +17,11 @@ load_dotenv()
 client = discord.Client()
 pipeline = joblib.load('phishing.pkl')
 client = commands.Bot(command_prefix='mega')
-logging_channel = client.get_channel(651631707966930945)
 
 
 @client.event
 async def on_ready():
+    logging_channel = client.get_channel(651631707966930945)
     print("bot online")
 
 
