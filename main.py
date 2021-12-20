@@ -67,6 +67,7 @@ async def on_message(message):
                     for link in links:
                         print(get_domain(link))
                         if get_domain(link) in TRUSTED_URLS:
+                            print("IN IT!!!! SAF!!!")
                             break
 
                     if 'bad' in pipeline.predict(parse_url(links)):
