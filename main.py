@@ -40,10 +40,9 @@ async def on_message(message):
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
                 while True:
-                    print(parse_url(links))
                     if 'bad' in pipeline.predict(parse_url(links)):
                         await message.delete()
-                        await logging_channel.send(f"⚠️ Phising link deleted: {message.author} -> `{str(links)}`")
+                        await logging_channel.send(f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}`")
                         break
                     break
     else:
