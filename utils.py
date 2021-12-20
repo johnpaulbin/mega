@@ -1,5 +1,5 @@
 import re
-
+import tldextract
 
 def parse_url(url):
     if isinstance(url, list):
@@ -15,3 +15,6 @@ def parse_url(url):
         if url.startswith('www.'):
             url = re.sub(r'www.', '', url)
         return url
+
+def get_domain(url):
+    return tldextract.extract(parse_url(url)).registered_domain

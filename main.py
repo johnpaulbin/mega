@@ -7,12 +7,13 @@ from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, CheckFailure, check
 import joblib
 import sklearn
-from utils import parse_url
+from utils import parse_url, get_domain
 import re
 from dotenv import load_dotenv
+import tldextract
+import json
 
 load_dotenv()
-
 client = discord.Client()
 pipeline = joblib.load('phishing.pkl')
 client = commands.Bot(command_prefix='mega')
@@ -20,8 +21,10 @@ client = commands.Bot(command_prefix='mega')
 
 @client.event
 async def on_ready():
-    global logging_channel
-    logging_channel = client.get_channel(849427163153563708)
+    global LOGGING_CHANNEL
+    LOGGING_CHANNEL = client.get_channel(849427163153563708)
+    global TRUSTED_URLS
+    TRUSTED_URLS = json.load(open("trust.json"))
     print("bot online")
 
 
@@ -32,20 +35,47 @@ async def predict(ctx, *, args):
     await ctx.reply(f"Predicted `{result}`")
 
 
+@client.command()
+async def trust(ctx, *, args):
+    links = re.findall(r'(https?://\S+)', ctx.message.content)
+    if not len(links) == 0 and get(
+            ctx.message.guild.roles,
+            name="Contributors") in ctx.message.author.roles:
+        with open("trust.json", "r+") as jsfile:
+            data = json.load(jsfile)
+            data.update({get_domain(links[0]): "safe"})
+            jsfile.seek(0)
+            json.dump(data, jsfile)
+            jsfile.close()
+        await ctx.reply(f"Added `{get_domain(links[0])}`")
+    else:
+        await ctx.reply(f"No links found in message.")
+
+
 @client.event
 async def on_message(message):
-    if not message.content.startswith('mega') and message.author != client.user:
+    if not message.content.startswith(
+            'mega') and message.author != client.user:
         if not get(message.guild.roles,
                    name="Contributors") in message.author.roles:
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
                 while True:
+                  
+                    for link in links:
+                        if get_domain(link) in TRUSTED_URLS:
+                            break
+
                     if 'bad' in pipeline.predict(parse_url(links)):
                         await message.delete()
-                        await logging_channel.send(f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```")
+                        await LOGGING_CHANNEL.send(
+                            f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
+                        )
                         break
+
                     break
     else:
         await client.process_commands(message)
+
 
 client.run(os.getenv("TOKEN"))
