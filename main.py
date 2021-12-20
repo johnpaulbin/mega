@@ -42,7 +42,7 @@ async def on_message(message):
                 while True:
                     if 'bad' in pipeline.predict(parse_url(links)):
                         await message.delete()
-                        await logging_channel.send(f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}`")
+                        await logging_channel.send(f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```")
                         break
                     break
     else:
