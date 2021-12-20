@@ -21,7 +21,7 @@ client = commands.Bot(command_prefix='mega')
 @client.event
 async def on_ready():
     global logging_channel
-    logging_channel = client.get_channel(651631707966930945)
+    logging_channel = client.get_channel(849427163153563708)
     print("bot online")
 
 
