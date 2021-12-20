@@ -17,6 +17,7 @@ load_dotenv()
 client = discord.Client()
 pipeline = joblib.load('phishing.pkl')
 client = commands.Bot(command_prefix='mega')
+logging_channel = client.get_channel(651631707966930945)
 
 
 @client.event
@@ -42,6 +43,7 @@ async def on_message(message):
                     print(parse_url(links))
                     if 'bad' in pipeline.predict(parse_url(links)):
                         await message.delete()
+                        await logging_channel.send(f"⚠️ Phising link deleted: {message.author} -> `{str(links)}`")
                         break
                     break
     else:
