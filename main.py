@@ -65,6 +65,7 @@ async def on_message(message):
                 while True:
                   
                     for link in links:
+                        print(get_domain(link))
                         if get_domain(link) in TRUSTED_URLS:
                             break
 
