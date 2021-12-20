@@ -47,6 +47,8 @@ async def trust(ctx, *, args):
             jsfile.seek(0)
             json.dump(data, jsfile)
             jsfile.close()
+        global TRUSTED_URLS
+        TRUSTED_URLS = json.load(open("trust.json"))
         await ctx.reply(f"Added `{get_domain(links[0])}`")
     else:
         await ctx.reply(f"No links found in message.")
