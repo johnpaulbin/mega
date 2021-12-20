@@ -10,6 +10,9 @@ from web import keep_alive
 import sklearn
 from utils import parse_url
 import re
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = discord.Client()
 pipeline = joblib.load('phishing.pkl')
