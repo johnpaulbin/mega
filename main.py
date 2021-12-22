@@ -38,19 +38,6 @@ async def predict(ctx, *, args):
     await ctx.reply(f"Predicted `{result}`")
 
 
-@client.command()
-async def nude(ctx, *, args):
-    if len(ctx.message.attachments) > 0:
-        result = nsfw(nsfwclassifier, ctx.message.attachments)
-        role = discord.utils.get(ctx.author.guild.roles, name='Muted')
-        
-        if result > .52:
-            ctx.message.delete()
-            await client.add_roles(ctx.message.author, role)
-            await asyncio.sleep(30)
-            await ctx.message.author.remove_roles(role)
-
-            await ctx.message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
 
 
 @client.command()
@@ -74,6 +61,20 @@ async def trust(ctx, *, args):
 
 @client.event
 async def on_message(message):
+
+    if len(message.attachments) > 0:
+        result = nsfw(nsfwclassifier, message.attachments)
+        role = discord.utils.get(message.author.guild.roles, name='Muted')
+        
+        if result > .55:
+            message.delete()
+            await message.author.add_roles(message.author, role)
+            await asyncio.sleep(30)
+            await message.author.remove_roles(role)
+
+            await message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
+
+
     if not message.content.startswith(
             'mega') and message.author != client.user:
         if not get(message.guild.roles,
