@@ -33,7 +33,7 @@ def nsfw(classifier, attachments):
     urllib.request.install_opener(opener)
     for attachment in attachments:
         uuid = str(time.time())
-        urllib.request.urlretrieve(attachment.url, f"{uuid}.png")
+        urllib.request.urlretrieve(attachment.url, f"{uuid}.jpg")
         file = classifier.classify(f"{uuid}.jpg")
         os.remove(f'{uuid}.jpg')
         return file[f'{uuid}.jpg']['unsafe']
