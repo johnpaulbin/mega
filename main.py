@@ -46,7 +46,7 @@ async def trust(ctx, *, args):
     links = re.findall(r'(https?://\S+)', ctx.message.content)
     if not len(links) == 0 and get(
             ctx.message.guild.roles,
-            name="Contributors") in ctx.message.author.roles:
+            id=836458265889079326) in ctx.message.author.roles:
         with open("trust.json", "r+") as jsfile:
             data = json.load(jsfile)
             data.update({get_domain(links[0]): "safe"})
@@ -78,7 +78,7 @@ async def on_message(message):
     if not message.content.startswith(
             'mega') and message.author != client.user:
         if not get(message.guild.roles,
-                   name="Contributors") in message.author.roles:
+                   id=836458265889079326) in message.author.roles:
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
                 for link in links:

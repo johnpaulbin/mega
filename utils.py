@@ -32,8 +32,18 @@ def nsfw(classifier, attachments):
     opener.addheaders = [('User-agent', 'Mozilla/5.0')]
     urllib.request.install_opener(opener)
     for attachment in attachments:
-        uuid = str(time.time())
-        urllib.request.urlretrieve(attachment.url, f"{uuid}.jpg")
-        file = classifier.classify(f"{uuid}.jpg")
-        os.remove(f'{uuid}.jpg')
-        return file[f'{uuid}.jpg']['unsafe']
+        req = urllib.request.Request(attachment.url, method='HEAD', headers={'User-Agent': 'Mozilla/5.0'})
+        r = urllib.request.urlopen(req)
+        filename = r.info().get_filename()
+
+        urllib.request.urlretrieve(attachment.url, f"{filename}")
+
+        if 'video' in r.getheader('Content-Type'):
+            file = classifier.classify_video(filename)
+            print(file)
+            return 0.01
+          
+        else:
+            file = classifier.classify(filename)
+        os.remove(filename)
+        return file[filename]['unsafe']
