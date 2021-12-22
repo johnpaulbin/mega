@@ -64,16 +64,13 @@ async def on_message(message):
 
     if len(message.attachments) > 0:
         result = nsfw(nsfwclassifier, message.attachments)
-        role = discord.utils.get(message.guild.roles, name='Muted')
-        
+        role = get(message.guild.roles, name='Muted')
         if result > .55:
-            message.delete()
+            await message.delete()
             await message.author.add_roles(message.author, role)
+            await message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
             await asyncio.sleep(30)
             await message.author.remove_roles(role)
-
-            await message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
-
 
     if not message.content.startswith(
             'mega') and message.author != client.user:
