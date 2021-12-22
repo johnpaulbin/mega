@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 import tldextract
 import json
 from nudenet import NudeClassifierLite
+import asyncio
 
 load_dotenv()
 client = discord.Client()
@@ -41,8 +42,15 @@ async def predict(ctx, *, args):
 async def nude(ctx, *, args):
     if len(ctx.message.attachments) > 0:
         result = nsfw(nsfwclassifier, ctx.message.attachments)
-        print(result)
-        await ctx.reply(f"Predicted")
+        role = discord.utils.get(ctx.author.server.roles, name='Muted')
+        
+        if result > .52:
+            ctx.message.delete()
+            await client.add_roles(ctx.message.author, role)
+            await asyncio.sleep(30)
+            await ctx.message.author.remove_roles(role)
+
+        await ctx.message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
 
 
 @client.command()
