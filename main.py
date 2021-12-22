@@ -68,7 +68,7 @@ async def on_message(message):
         if result > .55:
             await message.delete()
             await message.author.add_roles(role)
-            await message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
+            await message.channel.send(f"{message.author.mention} Muted for potential NSFW content")
             await asyncio.sleep(30)
             await message.author.remove_roles(role)
 
