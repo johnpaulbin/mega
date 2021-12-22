@@ -77,20 +77,26 @@ async def on_message(message):
 
     if not message.content.startswith(
             'mega') and message.author != client.user:
-        if not get(message.guild.roles,
-                   id=836458265889079326) in message.author.roles or not message.author.guild_permissions.administrator:
-            links = re.findall(r'(https?://\S+)', message.content)
-            if not len(links) == 0:
-                for link in links:
-                    if get_domain(link) in TRUSTED_URLS:
-                        return
 
-                if 'bad' in pipeline.predict(parse_url(links)):
-                    await message.delete()
-                    await get_logging_channel(message).send(
-                        f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
-                    )
-                return
+        if get(message.guild.roles,
+               id=836458265889079326) in message.author.roles:
+            return
+            
+        if message.author.guild_permissions.manage_messages:
+            return
+
+        links = re.findall(r'(https?://\S+)', message.content)
+        if not len(links) == 0:
+            for link in links:
+                if get_domain(link) in TRUSTED_URLS:
+                    return
+
+            if 'bad' in pipeline.predict(parse_url(links)):
+                await message.delete()
+                await get_logging_channel(message).send(
+                    f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
+                )
+            return
 
     else:
         await client.process_commands(message)
