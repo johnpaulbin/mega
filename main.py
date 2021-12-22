@@ -41,7 +41,7 @@ async def predict(ctx, *, args):
 async def nude(ctx, *, args):
     if len(ctx.message.attachments) > 0:
         result = nsfw(nsfwclassifier, ctx.message.attachments)
-        await ctx.reply(f"Predicted `{result}`")
+        await ctx.reply(f"Predicted `{str(result)}`")
 
 
 @client.command()
