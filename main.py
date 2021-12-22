@@ -64,7 +64,7 @@ async def on_message(message):
 
     if len(message.attachments) > 0:
         result = nsfw(nsfwclassifier, message.attachments)
-        role = discord.utils.get(message.author.guild.roles, name='Muted')
+        role = discord.utils.get(message.guild.roles, name='Muted')
         
         if result > .55:
             message.delete()
