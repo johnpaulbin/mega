@@ -27,11 +27,14 @@ def get_domain(url):
 
 
 def nsfw(classifier, attachments):
+    print(attachments)
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'Mozilla/5.0')] #Downloads the attachement
     urllib.request.install_opener(opener)
     for attachment in attachments:
         uuid = str(time.time())
         urllib.request.urlretrieve(attachment, f"{uuid}.png")
+        print("downloaded")
         file = classifier.classify(f"{uuid}.png")
+        print(file)
         return file
