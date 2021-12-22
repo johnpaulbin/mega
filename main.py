@@ -7,16 +7,18 @@ from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, CheckFailure, check
 import joblib
 import sklearn
-from utils import parse_url, get_domain
+from utils import parse_url, get_domain, nsfw
 import re
 from dotenv import load_dotenv
 import tldextract
 import json
+from nudenet import NudeClassifierLite
 
 load_dotenv()
 client = discord.Client()
 pipeline = joblib.load('phishing.pkl')
 client = commands.Bot(command_prefix='mega')
+nsfwclassifier = NudeClassifierLite()
 
 
 @client.event
@@ -33,6 +35,13 @@ async def predict(ctx, *, args):
     result = "safe" if pipeline.predict([parse_url(args)
                                          ])[0] != "bad" else "not safe"
     await ctx.reply(f"Predicted `{result}`")
+
+
+@client.command()
+async def nude(ctx, *, args):
+    if len(ctx.message.attachments) > 0:
+        result = nsfw(nsfwclassifier, ctx.message.attachments)
+        await ctx.reply(f"Predicted `{result}`")
 
 
 @client.command()
