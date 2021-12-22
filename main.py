@@ -29,16 +29,16 @@ async def on_ready():
     TRUSTED_URLS = json.load(open("trust.json"))
     print("bot online")
 
+
 def get_logging_channel(message):
     return get(message.guild.channels, name="automod-log")
+
 
 @client.command()
 async def predict(ctx, *, args):
     result = "safe" if pipeline.predict([parse_url(args)
                                          ])[0] != "bad" else "not safe"
     await ctx.reply(f"Predicted `{result}`")
-
-
 
 
 @client.command()
@@ -63,13 +63,14 @@ async def trust(ctx, *, args):
 @client.event
 async def on_message(message):
 
-    if len(message.attachments) > 0:
+    if len(message.attachments) > 0 and message.author != client.user:
         result = nsfw(nsfwclassifier, message.attachments)
         role = get(message.guild.roles, name='Muted')
         if result > .55:
             await message.delete()
             await message.author.add_roles(role)
-            await get_logging_channel(message).send(f"{message.author.mention} Muted for potential NSFW content")
+            await get_logging_channel(message).send(
+                f"{message.author.mention} Muted for potential NSFW content")
             await asyncio.sleep(30)
             await message.author.remove_roles(role)
             return
