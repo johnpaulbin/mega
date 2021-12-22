@@ -78,7 +78,7 @@ async def on_message(message):
     if not message.content.startswith(
             'mega') and message.author != client.user:
         if not get(message.guild.roles,
-                   id=836458265889079326) in message.author.roles:
+                   id=836458265889079326) in message.author.roles or not message.author.guild_permissions.administrator:
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
                 for link in links:
