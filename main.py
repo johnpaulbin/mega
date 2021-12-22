@@ -42,7 +42,7 @@ async def predict(ctx, *, args):
 async def nude(ctx, *, args):
     if len(ctx.message.attachments) > 0:
         result = nsfw(nsfwclassifier, ctx.message.attachments)
-        role = discord.utils.get(ctx.author.server.roles, name='Muted')
+        role = discord.utils.get(ctx.author.guild.roles, name='Muted')
         
         if result > .52:
             ctx.message.delete()
@@ -50,7 +50,7 @@ async def nude(ctx, *, args):
             await asyncio.sleep(30)
             await ctx.message.author.remove_roles(role)
 
-        await ctx.message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
+            await ctx.message.author.reply(f"You have been muted for 30 seconds for potential NSFW content.")
 
 
 @client.command()
