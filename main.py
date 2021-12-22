@@ -25,11 +25,12 @@ nsfwclassifier = NudeClassifierLite()
 @client.event
 async def on_ready():
     global LOGGING_CHANNEL
-    LOGGING_CHANNEL = client.get_channel(849427163153563708)
     global TRUSTED_URLS
     TRUSTED_URLS = json.load(open("trust.json"))
     print("bot online")
 
+def get_logging_channel(message):
+    return get(message.guild.channels, name="automod-log")
 
 @client.command()
 async def predict(ctx, *, args):
@@ -68,9 +69,10 @@ async def on_message(message):
         if result > .55:
             await message.delete()
             await message.author.add_roles(role)
-            await message.channel.send(f"{message.author.mention} Muted for potential NSFW content")
+            await get_logging_channel(message).send(f"{message.author.mention} Muted for potential NSFW content")
             await asyncio.sleep(30)
             await message.author.remove_roles(role)
+            return
 
     if not message.content.startswith(
             'mega') and message.author != client.user:
@@ -84,7 +86,7 @@ async def on_message(message):
 
                 if 'bad' in pipeline.predict(parse_url(links)):
                     await message.delete()
-                    await LOGGING_CHANNEL.send(
+                    await get_logging_channel(message).send(
                         f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
                     )
                 return
