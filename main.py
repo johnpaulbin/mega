@@ -17,13 +17,13 @@ import asyncio
 from itertools import cycle
 from os import listdir
 
-if __name__ == '__main__':
-    load_dotenv()
-    client = discord.Client()
-    client = commands.Bot(command_prefix='mega')
-    nsfwclassifier = NudeClassifierLite()
-    pipeline = joblib.load('phishing.pkl')
+load_dotenv()
+client = discord.Client()
+client = commands.Bot(command_prefix='mega')
+nsfwclassifier = NudeClassifierLite()
+pipeline = joblib.load('phishing.pkl')
 
+if __name__ == '__main__':
     global TRUSTED_URLS
     TRUSTED_URLS = json.load(open("trust.json"))
 
