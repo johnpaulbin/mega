@@ -33,20 +33,4 @@ def get_domain(url):
 def get_logging_channel(message):
     return get(message.guild.channels, name="automod-log")
 
-def get_trusted_urls():
-    return json.load(open("trust.json"))
 
-def nsfw(classifier, attachments):
-    opener = urllib.request.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    urllib.request.install_opener(opener)
-    for attachment in attachments:
-        req = urllib.request.Request(attachment.url,
-                                     method='HEAD',
-                                     headers={'User-Agent': 'Mozilla/5.0'})
-        r = urllib.request.urlopen(req)
-        filename = r.info().get_filename()
-        urllib.request.urlretrieve(attachment.url, filename)
-        file = classifier.classify(filename)
-        os.remove(filename)
-        return file[filename]['unsafe']
