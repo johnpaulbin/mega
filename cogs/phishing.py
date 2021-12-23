@@ -44,19 +44,15 @@ class Phishing(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author != self.client.user:
-
             if get(message.guild.roles,
                    id=836458265889079326) in message.author.roles:
                 return
-
+            # bypass link check if user has manage messages
             if message.author.guild_permissions.manage_messages:
                 return
-
             links = re.findall(r'(https?://\S+)', message.content)
             if not len(links) == 0:
-
                 filtered_links = []
-
                 for link in links:
                     if get_domain(link) not in get_trusted_urls():
                         filtered_links.append(link)
