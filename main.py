@@ -28,6 +28,9 @@ async def on_ready():
     global TRUSTED_URLS
     TRUSTED_URLS = json.load(open("trust.json"))
     print("bot online")
+    await asyncio.sleep(10)
+    game = discord.CustomActivity("looking out for baddies", emoji="👀")
+    await client.change_presence(status=discord.Status.online, activity=game)
 
 
 def get_logging_channel(message):
