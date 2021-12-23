@@ -1,15 +1,7 @@
 # urls
 import re
 import tldextract
-import time
 from discord.utils import get
-import json
-
-# nsfw
-from nudenet import NudeClassifierLite
-import urllib.request
-import os
-
 
 def parse_url(url):
     if isinstance(url, list):
