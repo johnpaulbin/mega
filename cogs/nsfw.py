@@ -7,23 +7,21 @@ import urllib
 from nudenet import NudeClassifierLite
 import os
 import asyncio
+import random
+import mimetypes
 
 
 def nsfw_check(classifier, attachments):
     for attachment in attachments:
-        req = urllib.request.Request(attachment.url,
-                                     method='HEAD',
-                                     headers={'User-Agent': 'Mozilla/5.0'})
-        r = urllib.request.urlopen(req)
-        filename = r.info().get_filename()
+        filetype = mimetypes.MimeTypes().guess_type(attachment.url)[0]
+        filename = str(random.randint(1,9999999)) + "." + filetype.split("/")[1]
         # checking if the file is an image before downloading
-        if 'image' not in r.getheader('Content-Type'):
+        if filetype[0] != "image":
             return
         opener = urllib.request.build_opener()
         opener.addheaders = [('User-agent', 'Mozilla/5.0')]
         urllib.request.install_opener(opener)
         urllib.request.urlretrieve(attachment.url, filename)
-        print(filename)
         file = classifier.classify(filename)
         os.remove(filename)
         return file[filename]['unsafe']
