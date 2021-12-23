@@ -7,19 +7,18 @@ import urllib
 from nudenet import NudeClassifierLite
 import os
 import asyncio
+import shutil
 
 
 def nsfw_check(classifier, attachments):
-    opener = urllib.request.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    urllib.request.install_opener(opener)
     for attachment in attachments:
         req = urllib.request.Request(attachment.url,
                                      method='HEAD',
                                      headers={'User-Agent': 'Mozilla/5.0'})
         r = urllib.request.urlopen(req)
         filename = r.info().get_filename()
-        urllib.request.urlretrieve(attachment.url, filename)
+        with urllib.request.urlopen(attachment.url, headers={'User-Agent': 'Mozilla/5.0'}) as response, open(filename, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
         file = classifier.classify(filename)
         os.remove(filename)
         return file[filename]['unsafe']
