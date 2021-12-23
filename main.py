@@ -14,7 +14,7 @@ import tldextract
 import json
 from nudenet import NudeClassifierLite
 import asyncio
-from Itertools import cycle
+from itertools import cycle
 from os import listdir
 
 if __name__ == '__main__':
