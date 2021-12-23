@@ -2,6 +2,8 @@
 import re
 import tldextract
 import time
+from discord.utils import get
+import json
 
 # nsfw
 from nudenet import NudeClassifierLite
@@ -28,6 +30,11 @@ def parse_url(url):
 def get_domain(url):
     return tldextract.extract(parse_url(url)).registered_domain
 
+def get_logging_channel(message):
+    return get(message.guild.channels, name="automod-log")
+
+def get_trusted_urls():
+    return json.load(open("trust.json"))
 
 def nsfw(classifier, attachments):
     opener = urllib.request.build_opener()

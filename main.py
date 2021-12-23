@@ -7,41 +7,37 @@ from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions, CheckFailure, check
 import joblib
 import sklearn
-from utils import parse_url, get_domain, nsfw
+from utils import parse_url, get_domain, nsfw, get_logging_channel, get_trusted_urls
 import re
 from dotenv import load_dotenv
 import tldextract
 import json
 from nudenet import NudeClassifierLite
 import asyncio
+from Itertools import cycle
+from os import listdir
 
-load_dotenv()
-client = discord.Client()
-pipeline = joblib.load('phishing.pkl')
-client = commands.Bot(command_prefix='mega')
-nsfwclassifier = NudeClassifierLite()
+if __name__ == '__main__':
+    load_dotenv()
+    client = discord.Client()
+    client = commands.Bot(command_prefix='mega')
+    nsfwclassifier = NudeClassifierLite()
+    pipeline = joblib.load('phishing.pkl')
 
+    global TRUSTED_URLS
+    TRUSTED_URLS = json.load(open("trust.json"))
+
+    for cog in listdir('./cogs'):
+        if cog.endswith('.py') == True:
+            client.load_extension(f'cogs.{cog[:-3]}')
+
+def get_pipeline():
+    return pipeline
 
 @client.event
 async def on_ready():
-    global LOGGING_CHANNEL
-    global TRUSTED_URLS
-    TRUSTED_URLS = json.load(open("trust.json"))
     print("bot online")
-    await asyncio.sleep(10)
-    game = discord.Game("with caution")
-    await client.change_presence(status=discord.Status.online, activity=game)
-
-
-def get_logging_channel(message):
-    return get(message.guild.channels, name="automod-log")
-
-
-@client.command()
-async def predict(ctx, *, args):
-    result = "safe" if pipeline.predict([parse_url(args)
-                                         ])[0] != "bad" else "not safe"
-    await ctx.reply(f"Predicted `{result}`")
+    change_status.start()
 
 
 @client.command()
@@ -56,8 +52,6 @@ async def trust(ctx, *, args):
             jsfile.seek(0)
             json.dump(data, jsfile)
             jsfile.close()
-        global TRUSTED_URLS
-        TRUSTED_URLS = json.load(open("trust.json"))
         await ctx.reply(f"Added `{get_domain(links[0])}`")
     else:
         await ctx.reply(f"No links found in message.")
@@ -77,34 +71,26 @@ async def on_message(message):
             await asyncio.sleep(30)
             await message.author.remove_roles(role)
             return
+    
+    await client.process_commands(message)
 
-    if not message.content.startswith('mega') and message.author != client.user:
 
-        if get(message.guild.roles,
-               id=836458265889079326) in message.author.roles:
-            return
-            
-        if message.author.guild_permissions.manage_messages:
-            return
+statuslist = cycle([
+    'with caution',
+    'with rad security measures',
+])
 
-        links = re.findall(r'(https?://\S+)', message.content)
-        if not len(links) == 0:
 
-            filtered_links = []
-
-            for link in links:
-                if get_domain(link) not in TRUSTED_URLS:
-                    filtered_links.append(link)
-
-            if 'bad' in pipeline.predict(parse_url(filtered_links)) and len(filtered_links) > 0:
-                await message.delete()
-                await get_logging_channel(message).send(
-                    f"⚠️ Phishing link(s) deleted: {message.author.mention} -> `{str(filtered_links)}` Context: ```{message.content}```"
-                )
-            return
-
-    else:
-        await client.process_commands(message)
+@tasks.loop(seconds=15)
+async def change_status():
+    """This is a background task that loops every 16 seconds.
+	The coroutine looped with this task will change status over time.
+	The statuses used are in the cycle list called `statuslist`_.
+	
+	Documentation:
+		https://discordpy.readthedocs.io/en/latest/ext/tasks/index.html
+	"""
+    await client.change_presence(activity=discord.Game(next(statuslist)))
 
 
 client.run(os.getenv("TOKEN"))
