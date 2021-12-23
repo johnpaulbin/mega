@@ -17,7 +17,7 @@ def nsfw_check(classifier, attachments):
                                      headers={'User-Agent': 'Mozilla/5.0'})
         r = urllib.request.urlopen(req)
         filename = r.info().get_filename()
-        with urllib.request.urlopen(attachment.url) as response, open(filename, 'wb') as out_file:
+        with urllib.request.urlopen(attachment.url).add_header('User-Agent', 'Mozilla/5.0') as response, open(filename, 'wb') as out_file:
             shutil.copyfileobj(response, out_file)
         file = classifier.classify(filename)
         os.remove(filename)
