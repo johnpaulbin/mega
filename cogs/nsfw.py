@@ -9,12 +9,12 @@ import os
 import asyncio
 import random
 import mimetypes
-
+import glob
 
 def nsfw_check(classifier, attachments):
     for attachment in attachments:
         filetype = mimetypes.MimeTypes().guess_type(attachment.url)[0]
-        filename = str(random.randint(1,9999999)) + ".jpg"
+        filename = "./download/" + str(random.randint(1,9999999)) + ".jpg"
         # checking if the file is an image before downloading
         if filetype.split("/")[0] != "image":
             pass
@@ -23,8 +23,11 @@ def nsfw_check(classifier, attachments):
         urllib.request.install_opener(opener)
         urllib.request.urlretrieve(attachment.url, filename)
         file = classifier.classify(filename)
-        os.remove(filename)
+        files = glob.glob('./download/*')
+        for f in files:
+            os.remove(f)
         return file[filename]['unsafe']
+    return None
 
 
 class Nsfw(commands.Cog):
@@ -37,7 +40,7 @@ class Nsfw(commands.Cog):
         if len(message.attachments) > 0 and message.author != self.client.user:
             result = nsfw_check(self.nsfwclassifier, message.attachments)
             role = get(message.guild.roles, name='Muted')
-            if result > .55:
+            if result > .55 and result != None:
                 await message.delete()
                 await message.author.add_roles(role)
                 await get_logging_channel(message).send(
