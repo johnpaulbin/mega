@@ -9,13 +9,13 @@ import sklearn
 import json
 
 
+def get_trusted_urls():
+        return json.load(open("trust.json"))
+
 class Phishing(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.pipeline = joblib.load('phishing.pkl')
-
-    def get_trusted_urls():
-        return json.load(open("trust.json"))
 
     @commands.command(name='trust')
     async def trust(self, ctx, *, args):

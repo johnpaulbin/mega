@@ -9,25 +9,26 @@ import os
 import asyncio
 
 
+def nsfw_check(classifier, attachments):
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    urllib.request.install_opener(opener)
+    for attachment in attachments:
+        req = urllib.request.Request(attachment.url,
+                                     method='HEAD',
+                                     headers={'User-Agent': 'Mozilla/5.0'})
+        r = urllib.request.urlopen(req)
+        filename = r.info().get_filename()
+        urllib.request.urlretrieve(attachment.url, filename)
+        file = classifier.classify(filename)
+        os.remove(filename)
+        return file[filename]['unsafe']
+
+
 class Nsfw(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.nsfwclassifier = NudeClassifierLite()
-
-    def nsfw_check(classifier, attachments):
-        opener = urllib.request.build_opener()
-        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-        urllib.request.install_opener(opener)
-        for attachment in attachments:
-            req = urllib.request.Request(attachment.url,
-                                     method='HEAD',
-                                     headers={'User-Agent': 'Mozilla/5.0'})
-            r = urllib.request.urlopen(req)
-            filename = r.info().get_filename()
-            urllib.request.urlretrieve(attachment.url, filename)
-            file = classifier.classify(filename)
-            os.remove(filename)
-            return file[filename]['unsafe']
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -38,7 +39,8 @@ class Nsfw(commands.Cog):
                 await message.delete()
                 await message.author.add_roles(role)
                 await get_logging_channel(message).send(
-                    f"{message.author.mention} Muted for potential NSFW content")
+                    f"{message.author.mention} Muted for potential NSFW content"
+                )
                 await asyncio.sleep(30)
                 await message.author.remove_roles(role)
         return
