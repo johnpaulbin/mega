@@ -1,3 +1,5 @@
 trust.json
 __pycache__/
 *.py[cod]
+
+.breakpoints
