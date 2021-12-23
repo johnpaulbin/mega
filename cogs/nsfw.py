@@ -17,10 +17,11 @@ def nsfw_check(classifier, attachments):
                                      headers={'User-Agent': 'Mozilla/5.0'})
         r = urllib.request.urlopen(req)
         filename = r.info().get_filename()
-        req = urllib.request.Request(attachment.url,
-                                     headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req).read() as response, open(filename, 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
+        # checking if the file is an image before downloading
+        if 'image' not in r.getheader('Content-Type'):
+            return
+
+        urllib.request.urlretrieve(attachment.url, filename)
         file = classifier.classify(filename)
         os.remove(filename)
         return file[filename]['unsafe']
