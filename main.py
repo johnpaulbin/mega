@@ -5,13 +5,11 @@ from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from itertools import cycle
 from os import listdir
-
 """
 Loading token from .env,
 loading cogs (modules),
 and making a cool status updator.
 """
-
 
 load_dotenv()
 client = discord.Client()
@@ -23,9 +21,11 @@ async def on_ready():
     print("bot online")
     change_status.start()
 
+
 @client.command()
 async def load(ctx, extension):
     client.load_extension(f'cogs.{extension}')
+
 
 # awesome status list to cycle from
 statuslist = cycle([
@@ -33,9 +33,11 @@ statuslist = cycle([
     'with rad security measures',
 ])
 
-@tasks.loop(seconds=60) # 60 to stay on discord's good list
+
+@tasks.loop(seconds=60)  # 60 to stay on discord's good list
 async def change_status():
     await client.change_presence(activity=discord.Game(next(statuslist)))
+
 
 """
 Initialize Cogs (modules) and run bot
