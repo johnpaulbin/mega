@@ -17,7 +17,7 @@ def nsfw_check(classifier, attachments):
         filename = str(random.randint(1,9999999)) + "." + filetype.split("/")[1]
         # checking if the file is an image before downloading
         if filetype.split("/")[0] != "image":
-            return
+            pass
         opener = urllib.request.build_opener()
         opener.addheaders = [('User-agent', 'Mozilla/5.0')]
         urllib.request.install_opener(opener)
