@@ -99,7 +99,7 @@ async def on_message(message):
             if 'bad' in pipeline.predict(parse_url(filtered_links)) and len(filtered_links) > 0:
                 await message.delete()
                 await get_logging_channel(message).send(
-                    f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(filtered_links)}` Context: ```{message.content}```"
+                    f"⚠️ Phishing link(s) deleted: {message.author.mention} -> `{str(filtered_links)}` Context: ```{message.content}```"
                 )
             return
 
