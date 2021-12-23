@@ -14,7 +14,7 @@ import mimetypes
 def nsfw_check(classifier, attachments):
     for attachment in attachments:
         filetype = mimetypes.MimeTypes().guess_type(attachment.url)[0]
-        filename = str(random.randint(1,9999999)) + "." + filetype.split("/")[1]
+        filename = str(random.randint(1,9999999)) + ".jpg"
         # checking if the file is an image before downloading
         if filetype.split("/")[0] != "image":
             pass
