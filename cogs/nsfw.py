@@ -7,7 +7,6 @@ import urllib
 from nudenet import NudeClassifierLite
 import os
 import asyncio
-import shutil
 
 
 def nsfw_check(classifier, attachments):
@@ -20,7 +19,9 @@ def nsfw_check(classifier, attachments):
         # checking if the file is an image before downloading
         if 'image' not in r.getheader('Content-Type'):
             return
-
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+        urllib.request.install_opener(opener)
         urllib.request.urlretrieve(attachment.url, filename)
         file = classifier.classify(filename)
         os.remove(filename)
