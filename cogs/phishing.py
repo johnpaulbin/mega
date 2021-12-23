@@ -61,7 +61,7 @@ class Phishing(commands.Cog):
                     if get_domain(link) not in get_trusted_urls():
                         filtered_links.append(link)
 
-                if 'bad' in self.pipeline.pipeline.predict(
+                if 'bad' in self.pipeline.predict(
                         parse_url(filtered_links)) and len(filtered_links) > 0:
                     await message.delete()
                     await get_logging_channel(message).send(
