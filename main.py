@@ -29,7 +29,7 @@ async def on_ready():
     TRUSTED_URLS = json.load(open("trust.json"))
     print("bot online")
     await asyncio.sleep(10)
-    game = discord.CustomActivity("looking out for baddies", emoji="👀")
+    game = discord.game("with caution")
     await client.change_presence(status=discord.Status.online, activity=game)
 
 
