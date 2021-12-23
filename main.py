@@ -78,8 +78,7 @@ async def on_message(message):
             await message.author.remove_roles(role)
             return
 
-    if not message.content.startswith(
-            'mega') and message.author != client.user:
+    if not message.content.startswith('mega') and message.author != client.user:
 
         if get(message.guild.roles,
                id=836458265889079326) in message.author.roles:
@@ -90,14 +89,17 @@ async def on_message(message):
 
         links = re.findall(r'(https?://\S+)', message.content)
         if not len(links) == 0:
-            for link in links:
-                if get_domain(link) in TRUSTED_URLS:
-                    return
 
-            if 'bad' in pipeline.predict(parse_url(links)):
+            filtered_links = []
+
+            for link in links:
+                if get_domain(link) not in TRUSTED_URLS:
+                    filtered_links.append(link)
+
+            if 'bad' in pipeline.predict(parse_url(filtered_links)) and len(filtered_links) > 0:
                 await message.delete()
                 await get_logging_channel(message).send(
-                    f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(links)}` Context: ```{message.content}```"
+                    f"⚠️ Phishing link deleted: {message.author.mention} -> `{str(filtered_links)}` Context: ```{message.content}```"
                 )
             return
 
