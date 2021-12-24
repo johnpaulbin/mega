@@ -10,7 +10,7 @@ def detoxify(model, message):
     prediction = list(model.predict(message).values())
     if prediction[0] > 0.95:
         return True, prediction[0], prediction[1]
-    elif format(prediction[1], 'f')[4] != "0": # there has got to be another way to format 5.123456e-5 better
+    elif float(format(prediction[1], '.4f')[4]) > 0.007: # there has got to be another way to format 5.123456e-5 better
         return True, prediction[0], prediction[1]
     return False, prediction[0], prediction[1]
 
