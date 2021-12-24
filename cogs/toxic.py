@@ -13,7 +13,8 @@ class Toxic(commands.Cog):
 
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
-        await ctx.send(str(self.model.predict(args)))
+        prediction = sum(list(self.model.predict(args).values()))
+        await ctx.send(str(prediction))
 
     @commands.Cog.listener()
     async def on_message(self, message):
