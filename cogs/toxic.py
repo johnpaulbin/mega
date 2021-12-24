@@ -6,6 +6,14 @@ from discord.ext import commands
 from detoxify import Detoxify
 
 
+def detoxify(model, message):
+    prediction = list(model.predict(message).values())
+    if prediction[0] > 0.97:
+        return True, prediction[0], prediction[1]
+    elif prediction[1] > 1.1e-2:
+        return True, prediction[0], prediction[1]
+    return False, prediction[0], prediction[1]
+
 class Toxic(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -13,9 +21,9 @@ class Toxic(commands.Cog):
 
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
-        prediction = list(self.model.predict(args).values())[0]
-        msg = "VERY TOXIC" if prediction > .89 else "NOT TOXIC"
-        await ctx.send(f"{msg} `{str(prediction)}`")
+        prediction, toxicity, severe = detoxify(self.model, args)
+        msg = "VERY TOXIC" if prediction == True else "NOT TOXIC"
+        await ctx.send(f"{msg} `{str(toxicity)} | {str(severe)}`")
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -23,11 +31,11 @@ class Toxic(commands.Cog):
             # bypass link check if user has manage messages
             if message.author.guild_permissions.manage_messages:
                 return
-            prediction = list(self.model.predict(message.content).values())[0]
-            if .89 < prediction:
+            prediction, toxicity, severe = detoxify(self.model, message.content)
+            if prediction == True:
                 await message.delete()
                 await get_logging_channel(message).send(
-                    f"⚠️ Toxic message deleted from: {message.author.mention} Context: ```{message.content}``` with score `{prediction}`"
+                    f"⚠️ Toxic message deleted from: {message.author.mention} Context: ```{message.content}``` with score `{str(toxicity)} | {str(severe)}`"
                 )
             return
 
