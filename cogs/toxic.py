@@ -14,7 +14,7 @@ class Toxic(commands.Cog):
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
         prediction = list(self.model.predict(args).values())[0]
-        msg = "VERY TOXIC" if prediction > .85 else "NOT TOXIC"
+        msg = "VERY TOXIC" if prediction > .89 else "NOT TOXIC"
         await ctx.send(f"{msg} `{str(prediction)}`")
 
     @commands.Cog.listener()
@@ -24,7 +24,7 @@ class Toxic(commands.Cog):
             if message.author.guild_permissions.manage_messages:
                 return
             prediction = list(self.model.predict(message.content).values())[0]
-            if .85 < prediction:
+            if .89 < prediction:
                 await message.delete()
                 await get_logging_channel(message).send(
                     f"⚠️ Toxic message deleted from: {message.author.mention} Context: ```{message.content}``` with score `{prediction}`"
