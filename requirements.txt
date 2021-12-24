@@ -1,0 +1,9 @@
+-f https://download.pytorch.org/whl/cpu/torch_stable.html
+torch==1.7.0+cpu
+detoxify
+discord
+NudeNet
+python-dotenv
+scikit-learn
+Flask
+tldextract
