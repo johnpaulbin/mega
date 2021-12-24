@@ -13,8 +13,8 @@ class Toxic(commands.Cog):
 
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
-        prediction = sum(list(self.model.predict(args).values()))
-        msg = "VERY TOXIC" if prediction > 1.15 else "NOT TOXIC"
+        prediction = list(self.model.predict(args).values())[0]
+        msg = "VERY TOXIC" if prediction > .85 else "NOT TOXIC"
         await ctx.send(f"{msg} `{str(prediction)}`")
 
     @commands.Cog.listener()
@@ -23,9 +23,8 @@ class Toxic(commands.Cog):
             # bypass link check if user has manage messages
             if message.author.guild_permissions.manage_messages:
                 return
-            prediction = sum(list(
-                self.model.predict(message.content).values()))
-            if 1.15 < prediction:
+            prediction = list(self.model.predict(message.content).values())[0]
+            if .85 < prediction:
                 await message.delete()
                 await get_logging_channel(message).send(
                     f"⚠️ Toxic message deleted from: {message.author.mention} Context: ```{message.content}``` with score `{prediction}`"
