@@ -10,7 +10,7 @@ def detoxify(model, message):
     prediction = list(model.predict(message).values())
     if prediction[0] > 0.97:
         return True, prediction[0], prediction[1]
-    elif prediction[1] > 1.1e-2:
+    elif prediction[1] + 1 > .01:
         return True, prediction[0], prediction[1]
     return False, prediction[0], prediction[1]
 
