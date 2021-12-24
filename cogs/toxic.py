@@ -14,7 +14,7 @@ class Toxic(commands.Cog):
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
         prediction = sum(list(self.model.predict(args).values()))
-        msg = "VERY TOXIC" if prediction > 1. else "NOT TOXIC"
+        msg = "VERY TOXIC" if prediction > 1.15 else "NOT TOXIC"
         await ctx.send(f"{msg} `{str(prediction)}`")
 
     @commands.Cog.listener()
@@ -25,7 +25,7 @@ class Toxic(commands.Cog):
                 return
             prediction = sum(list(
                 self.model.predict(message.content).values()))
-            if 1.35 < prediction:
+            if 1.15 < prediction:
                 await message.delete()
                 await get_logging_channel(message).send(
                     f"⚠️ Toxic message deleted from: {message.author.mention} Context: ```{message.content}``` with score `{prediction}`"
