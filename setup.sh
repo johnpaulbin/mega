@@ -8,7 +8,7 @@ wget "https://github.com/johnpaulbin/mega/releases/download/1.0/trust.json" -O t
 
 echo installing requirements...
 
-pip3 install -q -r requirements.txt
+pip3 install -r requirements.txt
 pip3 uninstall dataclasses -y
 
 echo setup complete
