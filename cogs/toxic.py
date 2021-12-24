@@ -14,7 +14,8 @@ class Toxic(commands.Cog):
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
         prediction = sum(list(self.model.predict(args).values()))
-        await ctx.send(str(prediction))
+        msg = "VERY TOXIC" if prediction > 1. else "NOT TOXIC"
+        await ctx.send(f"{msg} `{str(prediction)}`")
 
     @commands.Cog.listener()
     async def on_message(self, message):
