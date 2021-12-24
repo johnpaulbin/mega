@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord
-from utils import parse_url, get_domain, get_logging_channel
+from utils import get_logging_channel
 from discord.utils import get
 from discord.ext import commands
 from detoxify import Detoxify
