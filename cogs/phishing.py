@@ -99,7 +99,7 @@ class Phishing(commands.Cog):
                             )
                             with open("badlinks.json", "r+") as jsfile:
                                 data = json.load(jsfile)
-                                data.update(link: "bad"})
+                                data.update({link: "bad"})
                                 jsfile.seek(0)
                                 json.dump(data, jsfile)
                                 jsfile.close()
