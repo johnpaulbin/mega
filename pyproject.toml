@@ -12,6 +12,7 @@ scikit-learn = "^1.0.1"
 python-dotenv = "^0.19.2"
 tldextract = "^3.1.2"
 NudeNet = "^2.0.9"
+phish-detector = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 

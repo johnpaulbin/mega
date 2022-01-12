@@ -23,6 +23,7 @@ async def on_ready():
 
 
 @client.command()
+@commands.is_owner()
 async def load(ctx, extension):
     client.load_extension(f'cogs.{extension}')
 
