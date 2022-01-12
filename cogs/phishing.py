@@ -76,6 +76,7 @@ class Phishing(commands.Cog):
                 #        filtered_links.append(link)
                     print(link)
                     response = requests.get(link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'}).text
+                    print(response)
                     if any(response in keyword for keyword in BANNED_KEYWORDS):
                         print("BAD!!!")
                         print(urlparse(link).netloc.split('.')[1:])
