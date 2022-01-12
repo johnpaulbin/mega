@@ -14,7 +14,7 @@ import glob
 def nsfw_check(classifier, attachments):
     for attachment in attachments:
         filetype = mimetypes.MimeTypes().guess_type(attachment.url)[0]
-        filename = "./download/" + str(random.randint(1,9999999)) + ".jpg"
+        filename = "download/" + str(random.randint(1,9999999)) + ".jpg"
         # checking if the file is an image before downloading
         if filetype.split("/")[0] != "image":
             pass
@@ -23,7 +23,7 @@ def nsfw_check(classifier, attachments):
         urllib.request.install_opener(opener)
         urllib.request.urlretrieve(attachment.url, filename)
         file = classifier.classify(filename)
-        files = glob.glob('./download/*')
+        files = glob.glob('download/*')
         for f in files:
             os.remove(f)
         return file[filename]['unsafe']
