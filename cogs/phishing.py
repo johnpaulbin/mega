@@ -77,7 +77,7 @@ class Phishing(commands.Cog):
                     print(link)
                     response = requests.get(link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'}).text
                     print(response)
-                    if any(response in keyword for keyword in BANNED_KEYWORDS):
+                    if any(keyword in response for keyword in BANNED_KEYWORDS):
                         print("BAD!!!")
                         print(urlparse(link).netloc.split('.')[1:])
                         if not any(urlparse(link).netloc.split('.')[1:] in url for url in ["discord.com", "discordapp.com", "discord.net", "discordapp.net"]):
