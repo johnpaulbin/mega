@@ -10,6 +10,7 @@ import json
 from phish_detector import PhishDetector
 import requests
 from urllib.parse import urlparse
+import tldextract
 
 BANNED_KEYWORDS = [
     '<meta property="og:site_name" content="Disсоrd">', 'content="@discord"'
@@ -74,14 +75,10 @@ class Phishing(commands.Cog):
 
                 #    if get_domain(link) not in get_trusted_urls():
                 #        filtered_links.append(link)
-                    print(link)
                     response = requests.get(link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'}).text
-                    print(response)
                     if any(keyword in response for keyword in BANNED_KEYWORDS):
-                        print("BAD!!!")
-                        print(urlparse(link).netloc.split('.')[1:])
-                        if not any(urlparse(link).netloc.split('.')[1:] in url for url in ["discord.com", "discordapp.com", "discord.net", "discordapp.net"]):
-                            
+                        extracted = tldextract.extract(link)
+                        if not any(f'{extracted.domain}.{extracted.suffix}' in url for url in ["discord.com", "discordapp.com", "discord.net", "discordapp.net"]):
                             await message.delete()
                             await get_logging_channel(message).send(
                             f"⚠️ Phishing link deleted: {message.author.mention} -> `{link}` Context: ```{message.content}```"
