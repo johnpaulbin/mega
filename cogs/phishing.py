@@ -13,12 +13,13 @@ from urllib.parse import urlparse
 import tldextract
 
 BANNED_KEYWORDS = [
-    '<meta property="og:site_name" content="Disсоrd">', 'content="@discord"'
+    '<meta property="og:site_name" content="Disсоrd">', 'content="@discord"',
+    'title>Discord<'
 ]
 
 
-def get_trusted_urls():
-    return json.load(open("trust.json"))
+def get_bad_urls():
+    return json.load(open("badlinks.json"))
 
 
 class Phishing(commands.Cog):
@@ -27,6 +28,7 @@ class Phishing(commands.Cog):
         #self.pipeline = joblib.load('phishing.pkl')
         self.detector = PhishDetector()
 
+    """
     @commands.command(name='trust')
     async def trust(self, ctx, *, args):
         links = re.findall(r'(https?://\S+)', ctx.message.content)
@@ -43,6 +45,7 @@ class Phishing(commands.Cog):
         else:
             await ctx.reply(f"No links found in message.")
         return
+    
 
     @commands.command(name='predict')
     async def predict(self, ctx, *, args):
@@ -50,6 +53,8 @@ class Phishing(commands.Cog):
             [parse_url(args)])[0] != "bad" else "not safe"
         await ctx.reply(f"Predicted `{result}`")
         return
+
+    """
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -65,13 +70,22 @@ class Phishing(commands.Cog):
                 #filtered_links = []
                 for link in links:
 
+                    if any(link in key for key in get_bad_urls().keys()):
+                        await message.delete()
+                        await get_logging_channel(message).send(
+                            f"⚠️ Phishing link deleted: {message.author.mention} -> `{link}` Context: ```{message.content}```"
+                        )
+                        return
+
                     # this will scan currently known phishing sites via discord's database
                     if self.detector.check(link) == True:
                         await message.delete()
                         await get_logging_channel(message).send(
                             f"⚠️ Phishing link deleted: {message.author.mention} -> `{link}` Context: ```{message.content}```"
                         )
+                        
                         return
+
 
                 #    if get_domain(link) not in get_trusted_urls():
                 #        filtered_links.append(link)
@@ -83,6 +97,12 @@ class Phishing(commands.Cog):
                             await get_logging_channel(message).send(
                             f"⚠️ Phishing link deleted: {message.author.mention} -> `{link}` Context: ```{message.content}```"
                             )
+                            with open("badlinks.json", "r+") as jsfile:
+                                data = json.load(jsfile)
+                                data.update({get_domain(links[0]): "bad"})
+                                jsfile.seek(0)
+                                json.dump(data, jsfile)
+                                jsfile.close()
                             return
 
 
