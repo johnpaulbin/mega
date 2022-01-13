@@ -5,6 +5,9 @@ from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from itertools import cycle
 from os import listdir
+from pathlib import Path
+
+
 """
 Loading token from .env,
 loading cogs (modules),
@@ -15,6 +18,10 @@ load_dotenv()
 client = discord.Client()
 client = commands.Bot(command_prefix='mega')
 
+if not Path("badlinks.json").is_file():
+    f = open("badlinks.json", "w")
+    f.write("{}")
+    f.close()
 
 @client.event
 async def on_ready():
