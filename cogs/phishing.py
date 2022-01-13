@@ -83,29 +83,40 @@ class Phishing(commands.Cog):
                         await get_logging_channel(message).send(
                             f"⚠️ Phishing link deleted: {message.author.mention} -> `{link}` Context: ```{message.content}```"
                         )
-                        
+
                         return
 
+                    extracted = tldextract.extract(link)
+
+                    if any(f'{extracted.domain}.{extracted.suffix}' in url
+                           for url in [
+                               "discord.com", "discordapp.com", "discord.net",
+                               "discordapp.net", "discord.gg"
+                           ]):
+                        return
 
                 #    if get_domain(link) not in get_trusted_urls():
                 #        filtered_links.append(link)
-                    response = requests.get(link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'}).text
+                    response = requests.get(
+                        link,
+                        headers={
+                            'User-Agent':
+                            'Mozilla/5.0 c(Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+                        }).text
+
                     if any(keyword in response for keyword in BANNED_KEYWORDS):
-                        extracted = tldextract.extract(link)
-                        if not any(f'{extracted.domain}.{extracted.suffix}' in url for url in ["discord.com", "discordapp.com", "discord.net", "discordapp.net"]):
-                            await message.delete()
-                            await get_logging_channel(message).send(
-                            f"⚠️ Phishing link deleted: {message.author.mention} -> `{link}` Context: ```{message.content}```"
-                            )
-                            with open("badlinks.json", "r+") as jsfile:
-                                data = json.load(jsfile)
-                                data.update({link: "bad"})
-                                jsfile.seek(0)
-                                json.dump(data, jsfile)
-                                jsfile.close()
+                        await message.delete()
+                        await get_logging_channel(message).send(
+                            f"⚠️ Phishing link deleted, user kicked: {message.author.mention} -> `{link}` Context: ```{message.content}```"
+                        )
+                        await self.client.kick(message.author)
+                        with open("badlinks.json", "r+") as jsfile:
+                            data = json.load(jsfile)
+                            data.update({link: "bad"})
+                            jsfile.seek(0)
+                            json.dump(data, jsfile)
+                            jsfile.close()
                             return
-
-
                 """
                 if 'bad' in self.pipeline.predict(
                         parse_url(filtered_links)) and len(filtered_links) > 0:
