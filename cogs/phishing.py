@@ -14,7 +14,7 @@ import tldextract
 
 BANNED_KEYWORDS = [
     '<meta property="og:site_name" content="Disсоrd">', 'content="@discord"',
-    'title>Discord<'
+    'title>Discord<', '<meta name="twitter:site" content="@discord">'
 ]
 
 
