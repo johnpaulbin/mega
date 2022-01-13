@@ -109,7 +109,7 @@ class Phishing(commands.Cog):
                         await get_logging_channel(message).send(
                             f"⚠️ Phishing link deleted, user kicked: {message.author.mention} -> `{link}` Context: ```{message.content}```"
                         )
-                        await self.client.kick(message.author)
+                        await message.author.kick(reason="Potential Nitro Scam")
                         with open("badlinks.json", "r+") as jsfile:
                             data = json.load(jsfile)
                             data.update({link: "bad"})
