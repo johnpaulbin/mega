@@ -28,7 +28,7 @@ class Toxic(commands.Cog):
 
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
-        prediction, toxicity, severe = detoxify(self.model, self.model, self.sym_spell.word_segmentation(args).corrected_string)
+        prediction, toxicity, severe = detoxify(self.model, self.sym_spell.word_segmentation(args).corrected_string)
         msg = "VERY TOXIC" if prediction == True else "NOT TOXIC"
         await ctx.send(f"{msg} `{str(toxicity)} | {str(severe)}`")
 
