@@ -8,3 +8,4 @@ scikit-learn
 Flask
 tldextract
 phish-detector
+symspellpy
