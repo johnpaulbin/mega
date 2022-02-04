@@ -33,12 +33,12 @@ class Toxic(commands.Cog):
 
     @commands.command(name='toxic')
     async def toxicpredict(self, ctx, *, args):
+        last = await lastMessage(ctx.channel, ctx.author, ctx.message.id)
         prediction, toxicity, severe = detoxify(
             self.model,
-            normalize_text(args, self.sym_spell))
+            normalize_text(f"{last} {args}", self.sym_spell))
         msg = "VERY TOXIC" if prediction == True else "NOT TOXIC"
-        last = await lastMessage(ctx.channel, ctx.author, ctx.message.id)
-        await ctx.send(f"{msg} `{str(toxicity)} | {str(severe)}` {last}")
+        await ctx.send(f"{msg} `{str(toxicity)} | {str(severe)}`")
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -46,9 +46,11 @@ class Toxic(commands.Cog):
             # bypass toxic check if user can manage messages
             if message.author.guild_permissions.manage_messages:
                 return
+            last = await lastMessage(message.channel, message.author, message.id)
+
             prediction, toxicity, severe = detoxify(
                 self.model,
-                normalize_text(message.content, self.sym_spell))
+                normalize_text(f"{last} {message.content}", self.sym_spell))
 
             if prediction == True:
                 await message.delete()
