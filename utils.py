@@ -37,7 +37,7 @@ def normalize_text(text, sym_spell):
 
 
 async def lastMessage(channel, user, message_id):
-    for message in channel.history(limit=10):
+    async for message in channel.history(limit=10):
         if message.author == user and message.id != message_id:
             return message.content
     return ""
