@@ -36,17 +36,8 @@ def normalize_text(text, sym_spell):
     return sym_spell.word_segmentation(text).corrected_string
 
 
-async def lastMessage(channel, users_id):
-    oldestMessage = None
-    fetchMessage = await channel.history(limit = 10).find(lambda m: m.author.id == users_id)
-    if fetchMessage is None:
-        return ""
-
-    if oldestMessage is None:
-        oldestMessage = ''.join(fetchMessage)
-    else:
-        if fetchMessage.created_at > oldestMessage.created_at:
-            oldestMessage = fetchMessage
-
-    if (oldestMessage is not None):
-        return ''.join(oldestMessage.content)
+async def lastMessage(channel, user, message_id):
+    for message in channel.history(limit=10):
+        if message.author == user and message.id != message_id:
+            return message.content
+    return ""
