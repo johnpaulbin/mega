@@ -43,7 +43,7 @@ async def lastMessage(channel, users_id):
         return ""
 
     if oldestMessage is None:
-        oldestMessage = fetchMessage
+        oldestMessage = ''.join(fetchMessage)
     else:
         if fetchMessage.created_at > oldestMessage.created_at:
             oldestMessage = fetchMessage
