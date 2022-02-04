@@ -37,7 +37,8 @@ class Toxic(commands.Cog):
             self.model,
             normalize_text(args, self.sym_spell))
         msg = "VERY TOXIC" if prediction == True else "NOT TOXIC"
-        await ctx.send(f"{msg} `{str(toxicity)} | {str(severe)}` {lastMessage(ctx.channel, ctx.author, ctx.message.id)}")
+        last = await lastMessage(ctx.channel, ctx.author, ctx.message.id)
+        await ctx.send(f"{msg} `{str(toxicity)} | {str(severe)}` {last}")
 
     @commands.Cog.listener()
     async def on_message(self, message):
