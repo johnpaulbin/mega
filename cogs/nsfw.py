@@ -24,8 +24,7 @@ def nsfw_check(classifier, attachments):
         urllib.request.urlretrieve(attachment.url, filename)
         file = classifier.classify(filename)
         files = glob.glob('download/*')
-        for f in files:
-            os.remove(f)
+        for f in files: os.remove(f)
         return file[filename]['unsafe']
     return None
 
